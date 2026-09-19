@@ -1,21 +1,15 @@
 import React from 'react';
-import { Volume2, VolumeX, Settings, Download, Share2 } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { TITLE_BASE64, RAW_TITLE_URL, SCHOOL_LOGO_BASE64 } from '../assetsData';
 
 interface HeaderProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
-  onOpenSettings: () => void;
-  onOpenShareModal: () => void;
-  onDownloadHtml: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   soundEnabled,
   onToggleSound,
-  onOpenSettings,
-  onOpenShareModal,
-  onDownloadHtml,
 }) => {
   return (
     <header className="w-full max-w-[1340px] mx-auto px-3 sm:px-4 pt-3 pb-2 flex flex-col md:flex-row items-center justify-between gap-3 border-b border-cyan-500/20">
@@ -46,21 +40,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right side: Actions (Download & Share, Sound, Settings) */}
+      {/* Right side: Actions (Sound only) */}
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
-        {/* Share & Download Center Button */}
-        <button
-          id="header-share-modal-btn"
-          type="button"
-          onClick={onOpenShareModal}
-          title="تحميل ومشاركة اللعبة بالرابط أو كملف بدون إنترنت"
-          aria-label="تحميل ومشاركة اللعبة"
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-full font-black text-xs sm:text-sm bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:brightness-110 text-white border-2 border-emerald-300/60 shadow-[0_0_15px_rgba(16,185,129,0.4)] active:scale-95 transition-all animate-pulse hover:animate-none"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>تحميل ومشاركة اللعبة 📥</span>
-        </button>
-
         {/* Sound toggle button */}
         <button
           id="sound-toggle-btn"
@@ -68,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onToggleSound}
           aria-pressed={soundEnabled}
           aria-label={soundEnabled ? 'Mute game sound' : 'Unmute game sound'}
-          className="flex items-center gap-2 px-3 py-2 rounded-full font-bold text-xs sm:text-sm transition-all duration-200 shadow-md border focus:outline-none focus:ring-2 focus:ring-cyan-300 active:scale-95"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-full font-bold text-xs sm:text-sm transition-all duration-200 shadow-md border focus:outline-none focus:ring-2 focus:ring-cyan-300 active:scale-95"
           style={{
             background: soundEnabled
               ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
@@ -88,18 +69,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span>🔇 كتم</span>
             </>
           )}
-        </button>
-
-        {/* Settings Button */}
-        <button
-          id="header-settings-btn"
-          type="button"
-          onClick={onOpenSettings}
-          aria-label="Open game settings"
-          className="flex items-center gap-1.5 px-3 py-2 rounded-full font-bold text-xs sm:text-sm bg-gradient-to-r from-indigo-600 to-purple-600 text-white border border-purple-300/40 shadow-md hover:brightness-110 active:scale-95 transition-all"
-        >
-          <Settings className="w-4 h-4" />
-          <span>الإعدادات Settings</span>
         </button>
       </div>
     </header>

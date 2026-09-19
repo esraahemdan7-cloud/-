@@ -398,34 +398,20 @@ export default function App() {
       <Header
         soundEnabled={soundActive}
         onToggleSound={handleToggleSound}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenShareModal={() => setIsShareModalOpen(true)}
-        onDownloadHtml={handleDownloadStandaloneHtml}
       />
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-[1320px] mx-auto px-3 sm:px-4 py-3 sm:py-5 flex flex-col items-center">
         {/* Navigation Action Buttons above board */}
-        <div className="w-full flex items-center justify-between gap-2 max-w-[min(90vw,680px)] sm:max-w-[620px] md:max-w-[1040px] mb-3 flex-wrap">
+        <div className="w-full flex items-center justify-between gap-2 max-w-[min(90vw,680px)] sm:max-w-[620px] md:max-w-[1040px] mb-3">
           <button
             id="back-to-settings-btn"
             type="button"
             onClick={() => setIsSettingsOpen(true)}
             aria-label="Back to settings screen"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white border border-cyan-400/50 shadow-md active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white border border-cyan-400/50 shadow-md active:scale-95 transition-all"
           >
             <span>← الإعدادات Settings</span>
-          </button>
-
-          {/* Quick Share / Download Game Button */}
-          <button
-            id="quick-share-download-btn"
-            type="button"
-            onClick={() => setIsShareModalOpen(true)}
-            aria-label="تحميل ومشاركة اللعبة"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-300/60 shadow-[0_0_12px_rgba(16,185,129,0.4)] active:scale-95 transition-all"
-          >
-            <span>📥 تحميل ومشاركة اللعبة</span>
           </button>
 
           <button
@@ -433,7 +419,7 @@ export default function App() {
             type="button"
             onClick={handleRestartGame}
             aria-label="Restart current game"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white border border-amber-300/50 shadow-md active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white border border-amber-300/50 shadow-md active:scale-95 transition-all"
           >
             <span>↻ إعادة اللعبة Restart</span>
           </button>
