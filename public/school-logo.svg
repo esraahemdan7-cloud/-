@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" width="520" height="220">
+  <defs>
+    <filter id="card-glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.15)"/>
+    </filter>
+  </defs>
+  <!-- White rounded container background -->
+  <rect x="4" y="4" width="512" height="212" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#card-glow)"/>
+  
+  <!-- Left Graphic Symbol -->
+  <g transform="translate(15, 12)">
+    <!-- Stylized Human Figure (Purple) -->
+    <circle cx="75" cy="35" r="12" fill="#7a2182"/>
+    <path d="M50 78 C 55 58, 68 46, 85 52 C 78 62, 70 70, 68 85 Z" fill="#7a2182"/>
+    <path d="M42 62 C 58 48, 75 42, 98 40 C 90 48, 80 56, 68 62 Z" fill="#7a2182"/>
+    
+    <!-- Dynamic Book Pages / Wings -->
+    <!-- Yellow Page -->
+    <path d="M78 88 C 88 55, 102 38, 122 35 C 114 55, 105 75, 92 90 Z" fill="#f59e0b"/>
+    <path d="M82 92 C 92 68, 108 50, 128 46 C 120 66, 110 82, 96 95 Z" fill="#f97316"/>
+    <!-- Red Pages -->
+    <path d="M85 96 C 100 75, 118 62, 140 60 C 130 78, 118 94, 98 100 Z" fill="#dc2626"/>
+    <path d="M86 102 C 102 85, 122 75, 145 74 C 132 90, 118 104, 100 106 Z" fill="#b91c1c"/>
+    <path d="M86 108 C 104 95, 125 88, 148 88 C 134 102, 118 112, 100 112 Z" fill="#991b1b"/>
+    
+    <!-- Open Book Base (Blue wings) -->
+    <path d="M75 110 C 50 115, 25 125, 10 145 C 30 138, 55 132, 75 125 Z" fill="#0284c7"/>
+    <path d="M78 110 C 105 115, 130 125, 148 142 C 128 135, 102 128, 78 123 Z" fill="#0284c7"/>
+    
+    <!-- Crossed Flags Below -->
+    <!-- Flag poles -->
+    <line x1="42" y1="185" x2="112" y2="130" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="112" y1="185" x2="42" y2="130" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Saudi Flag (Green with sword silhouette) -->
+    <g transform="translate(35, 132) rotate(-12)">
+      <rect x="0" y="0" width="46" height="30" rx="3" fill="#15803d" opacity="0.88"/>
+      <!-- White script & sword symbol -->
+      <path d="M8 12 Q 22 8 36 12 Q 22 14 8 12" fill="#ffffff" opacity="0.9"/>
+      <line x1="10" y1="20" x2="36" y2="20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+      <line x1="14" y1="17" x2="14" y2="23" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Egyptian Flag (Red, White, Black with Eagle) -->
+    <g transform="translate(80, 124) rotate(12)">
+      <rect x="0" y="0" width="46" height="10" fill="#dc2626" rx="2" opacity="0.88"/>
+      <rect x="0" y="10" width="46" height="10" fill="#ffffff" opacity="0.95"/>
+      <rect x="0" y="20" width="46" height="10" fill="#1e293b" rx="2" opacity="0.88"/>
+      <!-- Golden Eagle of Saladin -->
+      <polygon points="23,12 21,17 25,17" fill="#d97706"/>
+      <circle cx="23" cy="14" r="2.5" fill="#b45309"/>
+    </g>
+  </g>
+  
+  <!-- Right Text Information -->
+  <g transform="translate(210, 20)">
+    <!-- Arabic School Name -->
+    <text x="285" y="55" font-family="'Amiri', 'Traditional Arabic', 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif" font-size="27" font-weight="bold" fill="#831843" text-anchor="end" letter-spacing="-0.5">
+      مدارس جيل المعارف العالمية
+    </text>
+    
+    <!-- English School Name -->
+    <text x="285" y="92" font-family="'Arial Rounded MT Bold', 'Trebuchet MS', Arial, sans-serif" font-size="16" font-weight="700" fill="#9d174d" text-anchor="end" letter-spacing="0.2">
+      Geel Almaarif International Schools
+    </text>
+    
+    <!-- Egyptian Track (المسار المصري) in Diwani / Ruq'ah style -->
+    <text x="285" y="160" font-family="'Amiri', 'Traditional Arabic', 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif" font-size="34" font-weight="bold" fill="#be123c" text-anchor="end" font-style="italic">
+      المسار المصري
+    </text>
+  </g>
+</svg>

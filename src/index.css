@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Trebuchet MS', 'Arial Rounded MT Bold', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #050d24 0%, #0a1f4d 40%, #083b7a 75%, #051438 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Title image styling matching prompt specifications */
+.title-img {
+  width: min(72vw, 720px);
+  height: 120px;
+  object-fit: cover;
+  object-position: left 40%;
+}
+
+@media (max-width: 480px) {
+  .title-img {
+    width: min(64vw, 250px);
+    height: 46px;
+  }
+}
+
+/* 3D Dice CSS Specifications */
+.stationary-dice-btn {
+  perspective: 600px;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.dice-cube {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.dice-cube.rolling {
+  animation: diceRollAnim 1s ease-out forwards;
+}
+
+.dice-face {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  border-radius: 15px;
+  border: 2px solid #ffd85b;
+  background: linear-gradient(135deg, #32dfff 0%, #087cf4 35%, #0a439f 70%, #061c52 100%);
+  box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.6), 0 0 8px rgba(255, 216, 91, 0.4);
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+
+/* 6 Face Transforms (translated by half cube size: 38px) */
+.face-front  { transform: rotateY(0deg) translateZ(38px); }
+.face-back   { transform: rotateY(180deg) translateZ(38px); }
+.face-right  { transform: rotateY(90deg) translateZ(38px); }
+.face-left   { transform: rotateY(-90deg) translateZ(38px); }
+.face-top    { transform: rotateX(90deg) translateZ(38px); }
+.face-bottom { transform: rotateX(-90deg) translateZ(38px); }
+
+/* Recessed glowing golden pips */
+.pip {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ffd85b 45%, #b45309 100%);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 6px rgba(255, 216, 91, 0.8);
+}
+
+@keyframes diceRollAnim {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  30% {
+    transform: rotateX(380deg) rotateY(260deg) rotateZ(180deg);
+  }
+  60% {
+    transform: rotateX(720deg) rotateY(540deg) rotateZ(360deg);
+  }
+  100% {
+    transform: rotateX(1080deg) rotateY(720deg) rotateZ(0deg);
+  }
+}
+
+/* Token hop animation */
+@keyframes hopAnim {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, calc(-50% - 16px)) scale(1.25);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.animate-hop {
+  animation: hopAnim 0.28s ease-in-out;
+}
+
+/* Modal shake animation on wrong answer */
+@keyframes shakeAnim {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+}
+
+.animate-shake {
+  animation: shakeAnim 0.45s ease-in-out;
+}
+
+/* Victory Confetti Animation */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(720deg);
+    opacity: 0.2;
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  animation: confettiFall linear infinite;
+}
+
+/* Victory Pop-in */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-popIn {
+  animation: popIn 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
