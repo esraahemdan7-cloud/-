@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Download, Share2 } from 'lucide-react';
 import { GameMode, QuestionRecord, PLAYER_COLORS } from '../types';
 import { playSaveSound } from '../audio';
 
@@ -12,6 +13,8 @@ interface SettingsModalProps {
   onSaveQuestions: (questions: QuestionRecord[]) => void;
   onStartGame: () => void;
   onClose?: () => void;
+  onDownloadHtml?: () => void;
+  onOpenShareModal?: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -24,6 +27,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onSaveQuestions,
   onStartGame,
   onClose,
+  onDownloadHtml,
+  onOpenShareModal,
 }) => {
   const [mode, setMode] = useState<GameMode>(initialMode);
   const [playerCount, setPlayerCount] = useState<number>(initialCount);
@@ -80,15 +85,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleSaveNames = () => {
-    // Fill blank names with P1, P2... or CPU
+    // Fill blank names with اللاعب 1, اللاعب 2... or CPU
     const finalNames = names.map((nm, idx) => {
-      if (mode === 'vs-cpu' && idx === 1) return 'CPU';
-      return nm.trim() || `P${idx + 1}`;
+      if (mode === 'vs-cpu' && idx === 1) return 'الكمبيوتر (CPU)';
+      return nm.trim() || `اللاعب ${idx + 1}`;
     });
     setNames(finalNames);
     localStorage.setItem('snakeTrailNames', JSON.stringify(finalNames));
     onSaveModeAndPlayers(mode, playerCount, finalNames);
-    setNamesSaveStatus(`✓ ${mode === 'vs-cpu' ? 2 : playerCount} names saved`);
+    setNamesSaveStatus(`✓ تم حفظ أسماء ${mode === 'vs-cpu' ? 2 : playerCount} لاعبين`);
     playSaveSound();
   };
 
@@ -209,9 +214,31 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Section 1: Play Modes */}
           <div>
             <label className="block text-cyan-300 font-extrabold text-sm uppercase tracking-wider mb-2.5">
-              Select Game Mode
+              طريقة اللعب (Game Mode)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Various Players (Default) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('local');
+                  setNamesSaveStatus('Unsaved changes');
+                }}
+                aria-pressed={mode === 'local'}
+                className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                  mode === 'local'
+                    ? 'border-amber-400 bg-amber-500/20 shadow-[0_0_20px_rgba(251,191,36,0.4)] ring-2 ring-amber-300'
+                    : 'border-slate-700 bg-slate-800/40 hover:border-slate-500'
+                }`}
+              >
+                <div className="text-lg font-black text-white flex items-center gap-2">
+                  <span>👥 لاعبين / طلاب (Various Players)</span>
+                </div>
+                <div className="text-xs text-slate-300 mt-1">
+                  من 2 إلى 5 طلاب في الفصل بالتبادل - تحكم يدوي كامل بالنرد والقطع.
+                </div>
+              </button>
+
               {/* Versus Computer */}
               <button
                 type="button"
@@ -228,32 +255,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }`}
               >
                 <div className="text-lg font-black text-white flex items-center gap-2">
-                  <span>🤖 Versus computer</span>
+                  <span>🤖 ضد الكمبيوتر (Versus Computer)</span>
                 </div>
                 <div className="text-xs text-slate-300 mt-1">
-                  Play solo against an automated CPU opponent.
-                </div>
-              </button>
-
-              {/* Various Players */}
-              <button
-                type="button"
-                onClick={() => {
-                  setMode('local');
-                  setNamesSaveStatus('Unsaved changes');
-                }}
-                aria-pressed={mode === 'local'}
-                className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                  mode === 'local'
-                    ? 'border-amber-400 bg-amber-500/20 shadow-[0_0_20px_rgba(251,191,36,0.4)] ring-2 ring-amber-300'
-                    : 'border-slate-700 bg-slate-800/40 hover:border-slate-500'
-                }`}
-              >
-                <div className="text-lg font-black text-white flex items-center gap-2">
-                  <span>👥 Various players</span>
-                </div>
-                <div className="text-xs text-slate-300 mt-1">
-                  2 to 5 local players sharing one screen or tablet.
+                  طالب يلعب ضد الكمبيوتر مع الضغط اليدوي على النرد لكل دور.
                 </div>
               </button>
             </div>
@@ -468,6 +473,44 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
           </details>
+
+          {/* Section 4: Download & Share Game */}
+          <div className="bg-gradient-to-r from-emerald-950/50 via-slate-900/80 to-blue-950/50 p-4 rounded-2xl border border-emerald-500/40 text-right" dir="rtl">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 text-emerald-300 font-extrabold text-sm sm:text-base">
+                <Share2 className="w-4 h-4 text-emerald-400" />
+                <span>تحميل اللعبة ومشاركتها مع الطلاب</span>
+              </div>
+              <span className="text-[11px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-400/30">
+                بدون الحاجة لـ GitHub
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+              يمكنك الحصول على الرابط المباشر للمشاركة، أو تنزيل ملف اللعبة كاملاً للتشغيل بدون إنترنت:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {onOpenShareModal && (
+                <button
+                  type="button"
+                  onClick={onOpenShareModal}
+                  className="flex-1 py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-cyan-600 hover:bg-cyan-500 text-white shadow active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>عرض الرابط المباشر للعبة</span>
+                </button>
+              )}
+              {onDownloadHtml && (
+                <button
+                  type="button"
+                  onClick={onDownloadHtml}
+                  className="flex-1 py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>تنزيل ملف HTML بدون نت</span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Footer: Start Game full width green button */}

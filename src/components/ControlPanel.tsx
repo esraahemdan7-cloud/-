@@ -158,19 +158,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               id="dice-roller-btn"
               type="button"
               onClick={onRollDice}
-              disabled={isBusy || isCpu || pendingMove !== null}
+              disabled={isBusy || pendingMove !== null}
               aria-label={`Dice showing ${diceValue}. Click to roll.`}
               title={
-                isCpu
-                  ? 'CPU turn in progress...'
-                  : pendingMove !== null
+                pendingMove !== null
                   ? 'Click Move Spaces button to proceed'
                   : 'Click to roll dice!'
               }
               className={`stationary-dice-btn relative w-[96px] h-[96px] flex items-center justify-center rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-400 cursor-pointer transition-all ${
-                isBusy || isCpu || pendingMove !== null
+                isBusy || pendingMove !== null
                   ? 'opacity-80 cursor-not-allowed'
-                  : 'hover:scale-105 active:scale-95'
+                  : 'hover:scale-105 active:scale-95 animate-pulse'
               }`}
             >
               {/* 3D Cube Container */}
@@ -192,21 +190,21 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           </div>
         </div>
 
-        {/* Human "Move N space" button appears after rolling */}
-        {pendingMove !== null && !isCpu && (
+        {/* Move space button appears after rolling (Manual control for all players) */}
+        {pendingMove !== null && (
           <div className="mt-3 flex justify-center">
             <button
               id="confirm-move-btn"
               type="button"
               onClick={onConfirmMove}
-              aria-label={`Move ${pendingMove} ${pendingMove === 1 ? 'space' : 'spaces'}`}
+              aria-label={`تحريك ${activePlayer ? activePlayer.name : ''} ${pendingMove} خطوات`}
               className="w-full py-2.5 px-4 rounded-xl font-black text-white text-base sm:text-lg tracking-wide shadow-lg transition-all duration-200 animate-pulse hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-4 focus:ring-amber-300"
               style={{
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 boxShadow: '0 4px 15px rgba(16,185,129,0.5)',
               }}
             >
-              Move {pendingMove} {pendingMove === 1 ? 'space' : 'spaces'} ▶
+              تحريك {activePlayer ? activePlayer.name : ''} ({pendingMove} {pendingMove === 1 ? 'خطوة' : 'خطوات'}) ▶
             </button>
           </div>
         )}

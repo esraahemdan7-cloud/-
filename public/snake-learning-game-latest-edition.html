@@ -1276,9 +1276,9 @@
 
       // Main State
       const state = {
-        mode: 'vs-cpu',
+        mode: 'local',
         playerCount: 2,
-        savedNames: ['P1', 'CPU'],
+        savedNames: ['اللاعب 1', 'اللاعب 2'],
         players: [],
         activeIndex: 0,
         diceValue: 1,
@@ -1634,21 +1634,14 @@
           state.isRolling = false;
           turnStatusTextEl.innerText = cur.name + ' rolled a ' + rolled + '!';
 
-          if (cur.isCpu) {
-            setTimeout(() => {
-              executeMove(cur.id, rolled);
-            }, 600);
-          } else {
-            state.pendingMove = rolled;
-            moveSpacesBtnEl.innerText = 'Move ' + rolled + ' ' + (rolled === 1 ? 'space' : 'spaces') + ' ▶';
-            moveSpacesBtnEl.style.display = 'block';
-          }
+          state.pendingMove = rolled;
+          moveSpacesBtnEl.innerText = 'تحريك ' + cur.name + ' (' + rolled + ' ' + (rolled === 1 ? 'خطوة' : 'خطوات') + ') ▶';
+          moveSpacesBtnEl.style.display = 'block';
         }, 1000);
       }
 
       diceBtnEl.addEventListener('click', () => {
-        const cur = state.players[state.activeIndex];
-        if (cur && !cur.isCpu) {
+        if (!state.isRolling && !state.isMoving && !state.winner && state.pendingMove === null) {
           rollDice();
         }
       });
@@ -1754,16 +1747,8 @@
         renderTokens();
         renderScoreboard();
         const nextP = state.players[state.activeIndex];
-        turnStatusTextEl.innerText = 'Turn passed to ' + nextP.name + '. Click dice to roll.';
+        turnStatusTextEl.innerText = 'حان دور ' + nextP.name + ' - اضغط على النرد لرميه 🎲';
         diceBtnEl.disabled = false;
-
-        if (nextP.isCpu) {
-          setTimeout(() => {
-            if (!state.winner && !state.isMoving) {
-              rollDice();
-            }
-          }, 900);
-        }
       }
 
       // Question Modal Logic

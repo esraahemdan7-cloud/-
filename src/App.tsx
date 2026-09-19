@@ -25,16 +25,18 @@ import { ControlPanel } from './components/ControlPanel';
 import { SettingsModal } from './components/SettingsModal';
 import { QuestionModal } from './components/QuestionModal';
 import { VictoryOverlay } from './components/VictoryOverlay';
+import { ShareDownloadModal } from './components/ShareDownloadModal';
 
 export default function App() {
   // Sound state
   const [soundActive, setSoundActive] = useState(true);
 
-  // Settings & mode state
+  // Settings & share modal state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [mode, setMode] = useState<GameMode>('vs-cpu');
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [mode, setMode] = useState<GameMode>('local');
   const [playerCount, setPlayerCount] = useState<number>(2);
-  const [playerNames, setPlayerNames] = useState<string[]>(['P1', 'CPU']);
+  const [playerNames, setPlayerNames] = useState<string[]>(['اللاعب 1', 'اللاعب 2']);
 
   // Questions (exactly 20 records)
   const [questions, setQuestions] = useState<QuestionRecord[]>(() => {
@@ -52,11 +54,11 @@ export default function App() {
     return DEFAULT_QUESTIONS;
   });
 
-  // Players state
+  // Players state - default to 2 human players (local)
   const [players, setPlayers] = useState<Player[]>(() => {
     return [
-      { id: 1, name: 'P1', color: PLAYER_COLORS[0], position: 0, trophies: 0, earnedSquares: [], isCpu: false },
-      { id: 2, name: 'CPU', color: PLAYER_COLORS[1], position: 0, trophies: 0, earnedSquares: [], isCpu: true },
+      { id: 1, name: 'اللاعب 1', color: PLAYER_COLORS[0], position: 0, trophies: 0, earnedSquares: [], isCpu: false },
+      { id: 2, name: 'اللاعب 2', color: PLAYER_COLORS[1], position: 0, trophies: 0, earnedSquares: [], isCpu: false },
     ];
   });
 
@@ -71,7 +73,7 @@ export default function App() {
   const [movingPlayerId, setMovingPlayerId] = useState<number | null>(null);
 
   // Status & Announcements
-  const [statusText, setStatusText] = useState<string>('Click the dice to roll.');
+  const [statusText, setStatusText] = useState<string>('دور اللاعب 1: اضغط على النرد لرميه 🎲');
   const [bannerEvent, setBannerEvent] = useState<BannerEvent | null>(null);
 
   // Active question modal
@@ -143,17 +145,9 @@ export default function App() {
 
     setTimeout(() => {
       setIsRolling(false);
-      setStatusText(`${activePlayer.name} rolled a ${rolled}!`);
-
-      if (activePlayer.isCpu) {
-        // CPU automatically moves after short delay
-        setTimeout(() => {
-          executeMovement(activePlayer.id, rolled);
-        }, 600);
-      } else {
-        // Human: show "Move N space(s)" button
-        setPendingMove(rolled);
-      }
+      setStatusText(`حصل ${activePlayer.name} على الرقم (${rolled})! اضغط على زر التحريك بالأسفل.`);
+      // ALWAYS require human confirmation click to move
+      setPendingMove(rolled);
     }, 1000);
   };
 
@@ -277,48 +271,19 @@ export default function App() {
     passTurn();
   };
 
-  // Pass turn to next player
+  // Pass turn to next player - NEVER auto-rolls! Always awaits click on dice
   const passTurn = () => {
     setActivePlayerIndex((prev) => {
       const nextIdx = (prev + 1) % players.length;
       const nextPlayer = players[nextIdx];
-      setStatusText(`Turn passed to ${nextPlayer.name}. Click dice to roll.`);
-
-      // If next player is CPU, schedule auto-roll
-      if (nextPlayer.isCpu) {
-        setTimeout(() => {
-          handleCpuTurn(nextPlayer.id);
-        }, 900);
-      }
+      setStatusText(`حان دور ${nextPlayer.name}! اضغط على النرد لرميه 🎲`);
       return nextIdx;
     });
   };
 
-  // Automated CPU turn
-  const handleCpuTurn = (cpuId: number) => {
-    if (winner || isMoving || isRolling) return;
-
-    setIsRolling(true);
-    playRollSound();
-
-    const rolled = Math.floor(Math.random() * 6) + 1;
-    setDiceValue(rolled);
-    setDiceRotation(calculateDiceRotation(rolled));
-    setStatusText('CPU is rolling dice...');
-
-    setTimeout(() => {
-      setIsRolling(false);
-      setStatusText(`CPU rolled a ${rolled}! Moving...`);
-
-      setTimeout(() => {
-        executeMovement(cpuId, rolled);
-      }, 700);
-    }, 1000);
-  };
-
-  // Open question modal (only allowed during human turn when not busy)
+  // Open question modal (allowed for any active player when not busy)
   const handleOpenQuestion = (squareNum: number) => {
-    if (isMoving || isRolling || winner || activePlayer.isCpu) return;
+    if (isMoving || isRolling || winner) return;
     setActiveQuestionSquare(squareNum);
   };
 
@@ -366,7 +331,7 @@ export default function App() {
       const isCpu = newMode === 'vs-cpu' && idx === 1;
       return {
         id: idx + 1,
-        name: isCpu ? 'CPU' : newNames[idx] || `P${idx + 1}`,
+        name: isCpu ? 'الكمبيوتر (CPU)' : newNames[idx] || `اللاعب ${idx + 1}`,
         color: PLAYER_COLORS[idx % PLAYER_COLORS.length],
         position: 0,
         trophies: 0,
@@ -379,7 +344,7 @@ export default function App() {
     setActivePlayerIndex(0);
     setPendingMove(null);
     setWinner(null);
-    setStatusText('Settings updated! Click the dice to roll.');
+    setStatusText(`تم حفظ الإعدادات! دور ${newPlayers[0]?.name}: اضغط على النرد لرميه 🎲`);
   };
 
   // Save questions
@@ -407,14 +372,24 @@ export default function App() {
     setStatusText('Game restarted! All players in starting dock.');
   };
 
-  // Trigger download of standalone HTML file
-  const handleDownloadStandaloneHtml = () => {
-    const link = document.createElement('a');
-    link.href = '/snake-learning-game-latest-edition.html';
-    link.download = 'snake-learning-game-latest-edition.html';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  // Trigger download of standalone HTML file reliably
+  const handleDownloadStandaloneHtml = async () => {
+    try {
+      const response = await fetch('/snake-learning-game-latest-edition.html');
+      if (!response.ok) throw new Error('File fetch error');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'snake-learning-game-latest-edition.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    } catch {
+      // Direct window fallback
+      window.open('/snake-learning-game-latest-edition.html', '_blank');
+    }
   };
 
   return (
@@ -424,13 +399,14 @@ export default function App() {
         soundEnabled={soundActive}
         onToggleSound={handleToggleSound}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
         onDownloadHtml={handleDownloadStandaloneHtml}
       />
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-[1320px] mx-auto px-3 sm:px-4 py-3 sm:py-5 flex flex-col items-center">
         {/* Navigation Action Buttons above board */}
-        <div className="w-full flex items-center justify-between gap-2 max-w-[min(90vw,680px)] sm:max-w-[620px] md:max-w-[1040px] mb-3">
+        <div className="w-full flex items-center justify-between gap-2 max-w-[min(90vw,680px)] sm:max-w-[620px] md:max-w-[1040px] mb-3 flex-wrap">
           <button
             id="back-to-settings-btn"
             type="button"
@@ -438,7 +414,18 @@ export default function App() {
             aria-label="Back to settings screen"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white border border-cyan-400/50 shadow-md active:scale-95 transition-all"
           >
-            <span>← Back to settings</span>
+            <span>← الإعدادات Settings</span>
+          </button>
+
+          {/* Quick Share / Download Game Button */}
+          <button
+            id="quick-share-download-btn"
+            type="button"
+            onClick={() => setIsShareModalOpen(true)}
+            aria-label="تحميل ومشاركة اللعبة"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-300/60 shadow-[0_0_12px_rgba(16,185,129,0.4)] active:scale-95 transition-all"
+          >
+            <span>📥 تحميل ومشاركة اللعبة</span>
           </button>
 
           <button
@@ -448,7 +435,7 @@ export default function App() {
             aria-label="Restart current game"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white border border-amber-300/50 shadow-md active:scale-95 transition-all"
           >
-            <span>↻ Restart game</span>
+            <span>↻ إعادة اللعبة Restart</span>
           </button>
         </div>
 
@@ -495,6 +482,18 @@ export default function App() {
         onSaveQuestions={handleSaveQuestions}
         onStartGame={() => setIsSettingsOpen(false)}
         onClose={() => setIsSettingsOpen(false)}
+        onDownloadHtml={handleDownloadStandaloneHtml}
+        onOpenShareModal={() => {
+          setIsSettingsOpen(false);
+          setIsShareModalOpen(true);
+        }}
+      />
+
+      {/* Share and Download Modal */}
+      <ShareDownloadModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        onDownloadHtml={handleDownloadStandaloneHtml}
       />
 
       {/* Question Modal */}
